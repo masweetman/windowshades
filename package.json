@@ -1,0 +1,14 @@
+{
+  "name": "windowshades",
+  "version": "1.0.0",
+  "description": "Control Hunter Douglas window shades",
+  "main": "index.js",
+  "author": "Mike Sweetman",
+  "license": "ISC",
+  "dependencies": {
+    "alexa-app": "^2.1.0",
+    "lodash": "^4.14.0",
+    "request": "^2.74.0",
+    "request-promise": "^4.0.2"
+  }
+}
