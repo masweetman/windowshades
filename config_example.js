@@ -1,5 +1,5 @@
 /* Copy to config.js and configure */
-var onfig = {};
+var config = {};
 
 // Application ID from developer.amazon.com
 config.applicationId = 'amzn1.echo-sdk-ams.app.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
