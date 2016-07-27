@@ -9,7 +9,7 @@ function WindowShadeHelper () {
 WindowShadeHelper.prototype.getAllScenes = function() {
   var options = {
     method: 'GET',
-    uri: ENDPOINT + 'scenes?'
+    uri: ENDPOINT + 'scenes?',
     resolveWithFullResponse: true,
     json: true
   };
@@ -19,7 +19,7 @@ WindowShadeHelper.prototype.getAllScenes = function() {
 WindowShadeHelper.prototype.getAllSceneCollections = function() {
   var options = {
     method: 'GET',
-    uri: ENDPOINT + 'scenecollections?'
+    uri: ENDPOINT + 'scenecollections?',
     resolveWithFullResponse: true,
     json: true
   };
