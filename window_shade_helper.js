@@ -6,30 +6,18 @@ var ENDPOINT = 'http://' + config.powerViewIP + '/api/';
 function WindowShadeHelper () {
 };
 
-var getAllScenes = function() {
+WindowShadeHelper.prototype.getAllScenes = function() {
   var options = {
     method: 'GET',
     uri: ENDPOINT + 'scenes?',
     resolveWithFullResponse: false,
     json: true
   };
-  var data = rp(options)
-  return data.response.body.sceneData;
-};
-
-var getAllSceneCollections = function() {
-  var options = {
-    method: 'GET',
-    uri: ENDPOINT + 'scenecollections?',
-    resolveWithFullResponse: true,
-    json: true
-  };
-  var data = rp(options)
-  return data.response.body.sceneCollectionData;
+  return rp(options)
 };
 
 WindowShadeHelper.prototype.getScene = function(sceneName) {
-  var scenes = getAllScenes();
+  var scenes = []
   var sceneNameDecoded = '';
   var query = '';
   scenes.forEach(function(scene) {
@@ -38,15 +26,6 @@ WindowShadeHelper.prototype.getScene = function(sceneName) {
       query = 'scenes?sceneid=' + scene.id;
     }
   });
-  if(sceneId == '') {
-    scenes = getAllSceneCollections().sceneCollectionData;
-    scenes.forEach(function(scene) {
-      sceneNameDecoded = Buffer(scene.name, 'base64').toString('ascii');
-      if(sceneName == sceneNameDecoded) {
-        query = 'scenecollections?scenecollectionid=' + scene.id;
-      }
-    });
-  }
   var options = {
     method: 'GET',
     uri: ENDPOINT + query,
