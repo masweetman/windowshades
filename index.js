@@ -35,7 +35,7 @@ app.intent('sceneintent', {
 app.intent('positionintent', {
   'slots': {
     'SHADE': 'SHADENAME',
-	  'POSITION': 'AMAZON.NUMBER'
+    'POSITION': 'AMAZON.NUMBER'
   },
   'utterances': ['{|open|close|set|move|position} {-|SHADE} {|to|at|for} {-|POSITION} {|percent}']
 },
