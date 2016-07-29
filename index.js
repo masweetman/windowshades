@@ -13,9 +13,9 @@ app.launch(function(req,res) {
 
 app.intent('sceneintent', {
   'slots': {
-    'SCENE': 'NAME'
+    'SCENE': 'SCENENAME'
   },
-  'utterances': ['{|for|to} {scene|recall|go} {|to} {-|SCENE}']
+  'utterances': ['{|for} {|scene|recall|go} {|to} {-|SCENE}']
 },
   function(req, res) {
     var sceneName = req.slot('SCENE');
@@ -37,7 +37,7 @@ app.intent('positionintent', {
     'SHADE': 'SHADENAME',
     'POSITION': 'AMAZON.NUMBER'
   },
-  'utterances': ['{|crack|set|move|position} {-|SHADE} {|to|at} {-|POSITION} {|percent}']
+  'utterances': ['{set|move|adjust} {-|SHADE} {|to|at} {-|POSITION} {|percent}']
 },
   function(req, res) {
     var shadeName = req.slot('SHADE');
