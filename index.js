@@ -41,16 +41,17 @@ app.intent('positionintent', {
 },
   function(req, res) {
     var shadeName = req.slot('SHADE');
-    var shadePosition = Integer.parseInt(req.slot('POSITION'));
+    var shadePosition = parseInt(req.slot('POSITION'), 10);
     var reprompt = 'Tell me a shade name and a position percentage.';
-    if (_.isEmpty(shadeName) || _.isEmpty(shadePosition)) {
+    if (_.isEmpty(shadeName)) {
       var prompt = 'I didn\'t catch that? Tell me a shade name and a position percentage.';
       res.say(prompt).reprompt(reprompt).shouldEndSession(false);
       return true;
     } else {
       var shadeHelper = new WindowShadeHelper();
       shadeHelper.setShadePosition(shadeName, shadePosition); 
-      res.say('OK.').send();
+      //res.say('OK.').send();
+      res.say(shadeName + ' ' + shadePosition + '.').send();
     }
   }
 );
