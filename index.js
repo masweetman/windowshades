@@ -15,7 +15,7 @@ app.intent('sceneintent', {
   'slots': {
     'SCENE': 'NAME'
   },
-  'utterances': ['{scene|recall} {-|SCENE}']
+  'utterances': ['{|for|to} {scene|recall|go} {|to} {-|SCENE}']
 },
   function(req, res) {
     var sceneName = req.slot('SCENE');
@@ -80,7 +80,7 @@ app.intent('closeintent', {
   'slots': {
     'SHADE': 'SHADENAME'
   },
-  'utterances': ['{close} {-|SHADE}']
+  'utterances': ['{close|shut} {-|SHADE}']
 },
   function(req, res) {
     var shadeName = req.slot('SHADE');
