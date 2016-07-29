@@ -41,7 +41,7 @@ app.intent('positionintent', {
 },
   function(req, res) {
     var shadeName = req.slot('SHADE');
-	var shadePosition = Integer.parseInt(req.slot('POSITION'));
+    var shadePosition = Integer.parseInt(req.slot('POSITION'));
     var reprompt = 'Tell me a shade name and a position percentage.';
     if (_.isEmpty(shadeName) || _.isEmpty(shadePosition)) {
       var prompt = 'I didn\'t catch that? Tell me a shade name and a position percentage.';
