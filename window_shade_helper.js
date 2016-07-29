@@ -3,19 +3,27 @@ var config = require('./config');
 var rp = require('request-promise');
 var ENDPOINT = 'http://' + config.powerViewIP + '/api/';
 
+var scenes = [];
+var shades = [];
+var sceneId = '';
+var shadeId = '';
+var sceneNameDecoded = '';
+var shadeNameDecoded = '';
+var shadePositionValue = 0;
+var query = '';
+var options = {};
+
 function WindowShadeHelper() {
 };
 
 WindowShadeHelper.prototype.getScene = function(sceneName) {
-  var options = {
+  options = {
     method: 'GET',
     uri: ENDPOINT + 'scenes?',
     json: true
   };
   rp(options).then(function (body) {
-      var scenes = body.sceneData;
-      var sceneNameDecoded = '';
-      var query = '';
+      scenes = body.sceneData;
       scenes.forEach(function(scene) {
         sceneNameDecoded = Buffer(scene.name, 'base64').toString('ascii');
         if(sceneName == sceneNameDecoded) {
@@ -32,16 +40,14 @@ WindowShadeHelper.prototype.getScene = function(sceneName) {
 };
 
 WindowShadeHelper.prototype.setShadePosition = function(shadeName, shadePosition) {
-  var options = {
+  options = {
     method: 'GET',
     uri: ENDPOINT + 'shades?',
     json: true
   };
   rp(options).then(function (body) {
-    var shades = body.shadeData;
-    var shadeNameDecoded = '';
-    var shadeId = '';
-    var shadePositionValue = (65535 * shadePosition / 100).toFixed(0);
+    shades = body.shadeData;
+    shadePositionValue = (65535 * shadePosition / 100).toFixed(0);
     shades.forEach(function(shade) {
       shadeNameDecoded = Buffer(shade.name, 'base64').toString('ascii');
       if(shadeName == shadeNameDecoded) {

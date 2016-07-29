@@ -5,9 +5,15 @@ var _ = require('lodash');
 var WindowShadeHelper = require ('./window_shade_helper');
 
 var app = new alexa.app('windowshades');
-
+var shadeHelper = new WindowShadeHelper();
+var prompt = '';
+var reprompt = '';
+var sceneName = '';
+var shadeName = '';
+var shadePosition = 0;
+ 
 app.launch(function(req,res) {
-  var prompt = 'Hello.';
+  prompt = 'Hello.';
   res.say(prompt).reprompt(prompt).shouldEndSession(false);
 });
 
@@ -18,14 +24,13 @@ app.intent('sceneintent', {
   'utterances': ['{|for} {|scene|recall|go} {|to} {-|SCENE}']
 },
   function(req, res) {
-    var sceneName = req.slot('SCENE');
-    var reprompt = 'Tell me which scene you\'d like.';
+    sceneName = req.slot('SCENE');
+    reprompt = 'Tell me which scene you\'d like.';
     if (_.isEmpty(sceneName)) {
-      var prompt = 'I didn\'t catch that? Tell me a scene name.';
+      prompt = 'I didn\'t catch that? Tell me a scene name.';
       res.say(prompt).reprompt(reprompt).shouldEndSession(false);
       return true;
     } else {
-      var shadeHelper = new WindowShadeHelper();
       shadeHelper.getScene(sceneName); 
       res.say('OK.').send();
     }
@@ -40,15 +45,14 @@ app.intent('positionintent', {
   'utterances': ['{set|move|adjust} {-|SHADE} {|to|at} {-|POSITION} {|percent}']
 },
   function(req, res) {
-    var shadeName = req.slot('SHADE');
-    var shadePosition = parseInt(req.slot('POSITION'), 10);
-    var reprompt = 'Tell me a shade name and a position percentage.';
+    shadeName = req.slot('SHADE');
+    shadePosition = parseInt(req.slot('POSITION'), 10);
+    reprompt = 'Tell me a shade name and a position percentage.';
     if (_.isEmpty(shadeName)) {
-      var prompt = 'I didn\'t catch that? Tell me a shade name and a position percentage.';
+      prompt = 'I didn\'t catch that? Tell me a shade name and a position percentage.';
       res.say(prompt).reprompt(reprompt).shouldEndSession(false);
       return true;
     } else {
-      var shadeHelper = new WindowShadeHelper();
       shadeHelper.setShadePosition(shadeName, shadePosition); 
       res.say('OK.').send();
     }
@@ -62,14 +66,13 @@ app.intent('openintent', {
   'utterances': ['{open} {-|SHADE}']
 },
   function(req, res) {
-    var shadeName = req.slot('SHADE');
-    var reprompt = 'Which shade would you like to open?';
+    shadeName = req.slot('SHADE');
+    reprompt = 'Which shade would you like to open?';
     if (_.isEmpty(shadeName)) {
-      var prompt = 'I didn\'t catch that. Which shade would you like to open?';
+      prompt = 'I didn\'t catch that. Which shade would you like to open?';
       res.say(prompt).reprompt(reprompt).shouldEndSession(false);
       return true;
     } else {
-      var shadeHelper = new WindowShadeHelper();
       shadeHelper.setShadePosition(shadeName, 100);
       res.say('OK.').send();
     }
@@ -83,14 +86,13 @@ app.intent('closeintent', {
   'utterances': ['{close|shut} {-|SHADE}']
 },
   function(req, res) {
-    var shadeName = req.slot('SHADE');
-    var reprompt = 'Which shade would you like to close?';
+    shadeName = req.slot('SHADE');
+    reprompt = 'Which shade would you like to close?';
     if (_.isEmpty(shadeName)) {
-      var prompt = 'I didn\'t catch that. Which shade would you like to close?';
+      prompt = 'I didn\'t catch that. Which shade would you like to close?';
       res.say(prompt).reprompt(reprompt).shouldEndSession(false);
       return true;
     } else {
-      var shadeHelper = new WindowShadeHelper();
       shadeHelper.setShadePosition(shadeName, 0);
       res.say('OK.').send();
     }
