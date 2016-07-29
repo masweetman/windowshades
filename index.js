@@ -7,7 +7,7 @@ var WindowShadeHelper = require ('./window_shade_helper');
 var app = new alexa.app('windowshades');
 
 app.launch(function(req,res) {
-  var prompt = 'Tell me to move a shade or recall a scene.';
+  var prompt = 'Hello.';
   res.say(prompt).reprompt(prompt).shouldEndSession(false);
 });
 
@@ -37,7 +37,7 @@ app.intent('positionintent', {
     'SHADE': 'SHADENAME',
     'POSITION': 'AMAZON.NUMBER'
   },
-  'utterances': ['{|open|close|set|move|position} {-|SHADE} {|to|at|for} {-|POSITION} {|percent}']
+  'utterances': ['{|crack|set|move|position} {-|SHADE} {|to|at} {-|POSITION} {|percent}']
 },
   function(req, res) {
     var shadeName = req.slot('SHADE');
@@ -50,6 +50,48 @@ app.intent('positionintent', {
     } else {
       var shadeHelper = new WindowShadeHelper();
       shadeHelper.setShadePosition(shadeName, shadePosition); 
+      res.say('OK.').send();
+    }
+  }
+);
+
+app.intent('openintent', {
+  'slots': {
+    'SHADE': 'SHADENAME'
+  },
+  'utterances': ['{open} {-|SHADE}']
+},
+  function(req, res) {
+    var shadeName = req.slot('SHADE');
+    var reprompt = 'Which shade would you like to open?';
+    if (_.isEmpty(shadeName)) {
+      var prompt = 'I didn\'t catch that. Which shade would you like to open?';
+      res.say(prompt).reprompt(reprompt).shouldEndSession(false);
+      return true;
+    } else {
+      var shadeHelper = new WindowShadeHelper();
+      shadeHelper.setShadePosition(shadeName, 100);
+      res.say('OK.').send();
+    }
+  }
+);
+
+app.intent('closeintent', {
+  'slots': {
+    'SHADE': 'SHADENAME'
+  },
+  'utterances': ['{close} {-|SHADE}']
+},
+  function(req, res) {
+    var shadeName = req.slot('SHADE');
+    var reprompt = 'Which shade would you like to close?';
+    if (_.isEmpty(shadeName)) {
+      var prompt = 'I didn\'t catch that. Which shade would you like to close?';
+      res.say(prompt).reprompt(reprompt).shouldEndSession(false);
+      return true;
+    } else {
+      var shadeHelper = new WindowShadeHelper();
+      shadeHelper.setShadePosition(shadeName, 0);
       res.say('OK.').send();
     }
   }
