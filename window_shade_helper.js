@@ -41,7 +41,7 @@ WindowShadeHelper.prototype.setShadePosition = function(shadeName, shadePosition
     var shades = body.shadeData;
     var shadeNameDecoded = '';
     var shadeId = '';
-	  var shadePositionValue = MATH.round(65535 * shadePosition / 100);
+	  var shadePositionValue = (65535 * shadePosition / 100).toFixed(0);
     shades.forEach(function(shade) {
       shadeNameDecoded = Buffer(shade.name, 'base64').toString('ascii');
       if(shadeName == shadeNameDecoded) {

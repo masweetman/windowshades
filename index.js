@@ -35,7 +35,7 @@ app.intent('sceneintent', {
 app.intent('positionintent', {
   'slots': {
     'SHADE': 'SHADENAME',
-	'POSITION': 'AMAZON.NUMBER',
+	  'POSITION': 'AMAZON.NUMBER'
   },
   'utterances': ['{|open|close|set|move|position} {-|SHADE} {|to|at|for} {-|POSITION} {|percent}']
 },
@@ -50,8 +50,7 @@ app.intent('positionintent', {
     } else {
       var shadeHelper = new WindowShadeHelper();
       shadeHelper.setShadePosition(shadeName, shadePosition); 
-      //res.say('OK.').send();
-      res.say(shadeName + ' ' + shadePosition + '.').send();
+      res.say('OK.').send();
     }
   }
 );
