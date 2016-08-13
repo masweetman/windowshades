@@ -12,10 +12,17 @@ var sceneName = '';
 var shadeName = '';
 var shadePosition = 0;
  
-app.launch(function(req,res) {
+app.launch(function(req, res) {
   prompt = 'Hello.';
   res.say(prompt).reprompt(prompt).shouldEndSession(false);
 });
+
+var exitFunction = function(req, res) {
+  prompt = 'Bye.';
+  res.say(prompt);
+};
+app.intent('AMAZON.StopIntent', exitFunction);
+app.intent('AMAZON.CancelIntent', exitFunction);
 
 app.intent('sceneintent', {
   'slots': {
@@ -32,7 +39,8 @@ app.intent('sceneintent', {
       return true;
     } else {
       shadeHelper.getScene(sceneName); 
-      res.say('OK.').send();
+      prompt = 'Ok.';
+      res.say(prompt);
     }
   }
 );
@@ -54,7 +62,8 @@ app.intent('positionintent', {
       return true;
     } else {
       shadeHelper.setShadePosition(shadeName, shadePosition); 
-      res.say('OK.').send();
+      prompt = 'OK.';
+      res.say(prompt).reprompt(prompt).shouldEndSession(false);
     }
   }
 );
@@ -74,7 +83,8 @@ app.intent('openintent', {
       return true;
     } else {
       shadeHelper.setShadePosition(shadeName, 100);
-      res.say('OK.').send();
+      prompt = 'OK.';
+      res.say(prompt).reprompt(prompt).shouldEndSession(false);
     }
   }
 );
@@ -94,9 +104,12 @@ app.intent('closeintent', {
       return true;
     } else {
       shadeHelper.setShadePosition(shadeName, 0);
-      res.say('OK.').send();
+      prompt = 'OK.';
+      res.say(prompt).reprompt(prompt).shouldEndSession(false);
     }
   }
 );
+
+
 
 module.exports = app;
