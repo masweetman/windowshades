@@ -13,8 +13,9 @@ var shadeName = '';
 var shadePosition = 0;
  
 app.launch(function(req, res) {
-  prompt = 'Hello.';
-  res.say(prompt).reprompt(prompt).shouldEndSession(false);
+  prompt = 'Opening shades.';
+  shadeHelper.getScene('all open'); 
+  res.say(prompt).reprompt('Say all closed to lower the shades.').shouldEndSession(false);
 });
 
 var exitFunction = function(req, res) {
@@ -72,13 +73,13 @@ app.intent('openintent', {
   'slots': {
     'SHADE': 'SHADENAME'
   },
-  'utterances': ['{open} {-|SHADE}']
+  'utterances': ['{raise} {-|SHADE}']
 },
   function(req, res) {
     shadeName = req.slot('SHADE');
-    reprompt = 'Which shade would you like to open?';
+    reprompt = 'Which shade would you like to raise?';
     if (_.isEmpty(shadeName)) {
-      prompt = 'I didn\'t catch that. Which shade would you like to open?';
+      prompt = 'I didn\'t catch that. Which shade would you like to raise?';
       res.say(prompt).reprompt(reprompt).shouldEndSession(false);
       return true;
     } else {
@@ -93,13 +94,13 @@ app.intent('closeintent', {
   'slots': {
     'SHADE': 'SHADENAME'
   },
-  'utterances': ['{close|shut} {-|SHADE}']
+  'utterances': ['{lower|shut} {-|SHADE}']
 },
   function(req, res) {
     shadeName = req.slot('SHADE');
-    reprompt = 'Which shade would you like to close?';
+    reprompt = 'Which shade would you like to lower?';
     if (_.isEmpty(shadeName)) {
-      prompt = 'I didn\'t catch that. Which shade would you like to close?';
+      prompt = 'I didn\'t catch that. Which shade would you like to lower?';
       res.say(prompt).reprompt(reprompt).shouldEndSession(false);
       return true;
     } else {
