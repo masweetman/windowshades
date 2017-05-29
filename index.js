@@ -13,9 +13,8 @@ var shadeName = '';
 var shadePosition = 0;
  
 app.launch(function(req, res) {
-  prompt = 'Opening shades.';
-  shadeHelper.getScene('all open'); 
-  res.say(prompt).reprompt('Say all closed to lower the shades.').shouldEndSession(false);
+  prompt = 'Welcome to window shade control.';
+  res.say(prompt).reprompt('You can say open bedroom shades or set bottom living room shade to 25%.').shouldEndSession(false);
 });
 
 var exitFunction = function(req, res) {
