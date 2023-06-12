@@ -1,115 +1,185 @@
-var alexa = require('alexa-app');
-module.change_code = 1;
-var config = require('./config');
-var _ = require('lodash');
-var WindowShadeHelper = require ('./window_shade_helper');
+// Import dependencies
+var config = require ('./config')
+var http = require('http');
+const Alexa = require('ask-sdk-core');
 
-var app = new alexa.app('windowshades');
-var shadeHelper = new WindowShadeHelper();
-var prompt = '';
-var reprompt = '';
-var sceneName = '';
-var shadeName = '';
-var shadePosition = 0;
- 
-app.launch(function(req, res) {
-  prompt = 'Welcome to window shade control.';
-  res.say(prompt).reprompt('You can say open bedroom shades or set bottom living room shade to 25%.').shouldEndSession(false);
-});
+var endpoint = 'http://' + config.host + '/api/';
+var uri = '';
 
-var exitFunction = function(req, res) {
-  prompt = 'Bye.';
-  res.say(prompt);
+// Request handlers
+const LaunchRequestHandler = {
+  canHandle(handlerInput) {
+    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
+  },
+  handle(handlerInput) {
+    const speechText = 'What scene would you like?';
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .reprompt(speechText)
+      .withSimpleCard('What scene would you like?', speechText)
+      .getResponse();
+  }
 };
-app.intent('AMAZON.StopIntent', exitFunction);
-app.intent('AMAZON.CancelIntent', exitFunction);
 
-app.intent('sceneintent', {
-  'slots': {
-    'SCENE': 'SCENENAME'
+const OpenSceneIntentHandler = {
+  canHandle(handlerInput) {
+    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+      && Alexa.getIntentName(handlerInput.requestEnvelope) === 'OpenSceneIntent';
   },
-  'utterances': ['{|for} {|scene|recall|go} {|to} {-|SCENE}']
-},
-  function(req, res) {
-    sceneName = req.slot('SCENE');
-    reprompt = 'Tell me which scene you\'d like.';
-    if (_.isEmpty(sceneName)) {
-      prompt = 'I didn\'t catch that? Tell me a scene name.';
-      res.say(prompt).reprompt(reprompt).shouldEndSession(false);
-      return true;
-    } else {
-      shadeHelper.getScene(sceneName); 
-      prompt = 'Ok.';
-      res.say(prompt);
-    }
-  }
-);
+  handle(handlerInput) {
+    const scene = Alexa.getSlotValue(handlerInput.requestEnvelope, 'scene');
 
-app.intent('positionintent', {
-  'slots': {
-    'SHADE': 'SHADENAME',
-    'POSITION': 'AMAZON.NUMBER'
+    //control the shades
+    switch(scene) {
+      case 'all':
+        uri = endpoint + config.openAll;
+        break;
+      case 'bedroom':
+        uri = endpoint + config.openBedroom;
+        break;
+      case 'stairs':
+        uri = endpoint + config.openStairs;
+        break;
+      case 'living room':
+        uri = endpoint + config.openLivingRoom;
+        break;
+      default:
+        // code block
+    }
+    http.get(uri);
+
+    const speechText = 'Ok.';
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .withSimpleCard('Ok.', speechText)
+      .getResponse();
+  }
+};
+
+const CloseSceneIntentHandler = {
+  canHandle(handlerInput) {
+    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+      && Alexa.getIntentName(handlerInput.requestEnvelope) === 'CloseSceneIntent';
   },
-  'utterances': ['{set|move|adjust} {-|SHADE} {|to|at} {-|POSITION} {|percent}']
-},
-  function(req, res) {
-    shadeName = req.slot('SHADE');
-    shadePosition = parseInt(req.slot('POSITION'), 10);
-    reprompt = 'Tell me a shade name and a position percentage.';
-    if (_.isEmpty(shadeName)) {
-      prompt = 'I didn\'t catch that? Tell me a shade name and a position percentage.';
-      res.say(prompt).reprompt(reprompt).shouldEndSession(false);
-      return true;
-    } else {
-      shadeHelper.setShadePosition(shadeName, shadePosition); 
-      prompt = 'OK.';
-      res.say(prompt).reprompt(prompt).shouldEndSession(false);
-    }
-  }
-);
+  handle(handlerInput) {
+    const scene = Alexa.getSlotValue(handlerInput.requestEnvelope, 'scene');
 
-app.intent('openintent', {
-  'slots': {
-    'SHADE': 'SHADENAME'
+    //control the shades
+    switch(scene) {
+      case 'all':
+        uri = endpoint + config.closeAll;
+        break;
+      case 'bedroom':
+        uri = endpoint + config.closeBedroom;
+        break;
+      case 'stairs':
+        uri = endpoint + config.closeStairs;
+        break;
+      case 'living room':
+        uri = endpoint + config.closeLivingRoom;
+        break;
+      default:
+        // code block
+    }
+    http.get(uri);
+
+    const speechText = 'Ok.';
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .withSimpleCard('Ok.', speechText)
+      .getResponse();
+  }
+};
+
+const PartialSceneIntentHandler = {
+  canHandle(handlerInput) {
+    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+      && Alexa.getIntentName(handlerInput.requestEnvelope) === 'PartialSceneIntent';
   },
-  'utterances': ['{raise} {-|SHADE}']
-},
-  function(req, res) {
-    shadeName = req.slot('SHADE');
-    reprompt = 'Which shade would you like to raise?';
-    if (_.isEmpty(shadeName)) {
-      prompt = 'I didn\'t catch that. Which shade would you like to raise?';
-      res.say(prompt).reprompt(reprompt).shouldEndSession(false);
-      return true;
-    } else {
-      shadeHelper.setShadePosition(shadeName, 100);
-      prompt = 'OK.';
-      res.say(prompt).reprompt(prompt).shouldEndSession(false);
-    }
-  }
-);
+  handle(handlerInput) {
+    const scene = Alexa.getSlotValue(handlerInput.requestEnvelope, 'scene');
 
-app.intent('closeintent', {
-  'slots': {
-    'SHADE': 'SHADENAME'
+    //control the shades
+    uri = endpoint + config.partialAll;
+    http.get(uri);
+
+    const speechText = 'Ok.';
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .withSimpleCard('Ok.', speechText)
+      .getResponse();
+  }
+};
+
+const HelpIntentHandler = {
+  canHandle(handlerInput) {
+    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+      && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
   },
-  'utterances': ['{lower|shut} {-|SHADE}']
-},
-  function(req, res) {
-    shadeName = req.slot('SHADE');
-    reprompt = 'Which shade would you like to lower?';
-    if (_.isEmpty(shadeName)) {
-      prompt = 'I didn\'t catch that. Which shade would you like to lower?';
-      res.say(prompt).reprompt(reprompt).shouldEndSession(false);
-      return true;
-    } else {
-      shadeHelper.setShadePosition(shadeName, 0);
-      prompt = 'OK.';
-      res.say(prompt).reprompt(prompt).shouldEndSession(false);
-    }
+  handle(handlerInput) {
+    const speechText = 'You can say Open the Living Room Shades or Close All the Shades';
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .reprompt(speechText)
+      .withSimpleCard('You can say Open the Living Room Shades or Close All the Shades', speechText)
+      .getResponse();
   }
-);
+};
 
+const CancelAndStopIntentHandler = {
+  canHandle(handlerInput) {
+    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+      && (Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent'
+        || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent');
+  },
+  handle(handlerInput) {
+    const speechText = 'Goodbye!';
 
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .withSimpleCard('Goodbye!', speechText)
+      .withShouldEndSession(true)
+      .getResponse();
+  }
+};
 
-module.exports = app;
+const SessionEndedRequestHandler = {
+  canHandle(handlerInput) {
+    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'SessionEndedRequest';
+  },
+  handle(handlerInput) {
+    // Any clean-up logic goes here.
+    return handlerInput.responseBuilder.getResponse();
+  }
+};
+
+const ErrorHandler = {
+  canHandle() {
+    return true;
+  },
+  handle(handlerInput, error) {
+    console.log(`Error handled: ${error.message}`);
+
+    return handlerInput.responseBuilder
+      .speak('Sorry, I don\'t understand your command. Please say it again or ask me for help.')
+      .reprompt('Sorry, I don\'t understand your command. Please say it again or ask me for help.')
+      .getResponse();
+  }
+};
+
+exports.handler = Alexa.SkillBuilders.custom()
+  .addRequestHandlers(
+    LaunchRequestHandler,
+    OpenSceneIntentHandler,
+    CloseSceneIntentHandler,
+    PartialSceneIntentHandler,
+    HelpIntentHandler,
+    CancelAndStopIntentHandler,
+    SessionEndedRequestHandler)
+  .addErrorHandlers(ErrorHandler)
+  .lambda();
